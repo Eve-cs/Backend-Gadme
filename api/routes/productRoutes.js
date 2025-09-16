@@ -1,20 +1,22 @@
-import { dotenv } from "dotenv";
+import dotenv from "dotenv";
 import express from "express";
 import {
   createProduct,
   deleteProduct,
   editProduct,
   getAllProducts,
-} from "../controllers/productsControllers";
+} from "../controllers/productsControllers.js";
 import { authUser } from "../../middleware/auth";
 
 dotenv.config();
 
 const router = express.Router();
 
-//for all product from the website without auth
+//for all product from the website without auth - PUBLIC
 //GET all products
 router.get("/products", getAllProducts);
+router.get("/products/:productId", getProductById);
+
 //POST a new product in database
 router.post("/products", createProduct);
 
@@ -22,7 +24,7 @@ router.post("/products", createProduct);
 router.post("/add-product", authUser, createProduct);
 
 //Edit Product
-router.put("edit-product/:productId", authUser, editProduct);
+router.put("/edit-product/:productId", authUser, editProduct);
 
 //Delete Product
 router.delete("/delete-product/:productId", authUser, deleteProduct);

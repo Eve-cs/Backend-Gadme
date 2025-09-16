@@ -17,6 +17,24 @@ export const getAllProducts = async (_req, res) => {
   }
 };
 
+//gotta change this to be getProductById
+// export const getAllProducts = async (_req, res) => {
+//   try {
+//     const products = await Product.find().sort({ createdAt: -1, isPinned: -1 });
+//     return res.json({
+//       error: false,
+//       products,
+//       message: "All products retrieved successfully",
+//     });
+//   } catch (err) {
+//     return res.status(500).json({
+//       error: true,
+//       message: "Failed to fetch all products",
+//       details: err.message,
+//     });
+//   }
+// };
+
 //createProduct
 export const createProduct = async (req, res, next) => {
   const {
