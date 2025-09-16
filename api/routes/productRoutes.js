@@ -5,8 +5,9 @@ import {
   deleteProduct,
   editProduct,
   getAllProducts,
+  getProductById,
 } from "../controllers/productsControllers.js";
-import { authUser } from "../../middleware/auth";
+import { authUser } from "../../middleware/auth.js";
 
 dotenv.config();
 
