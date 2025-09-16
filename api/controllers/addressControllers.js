@@ -1,19 +1,19 @@
-import { Address } from "../../models/Address.js";
+import { User } from "../../models/User.js";
 
 // getAddress
 export const getAddress = async (req, res, next) => {
   // comment ออก หากจะ test โดยไม่ต้องใช้ token
-  if (!req.user || !req.user.id) {
-    const error = new Error("Unauthorized: No user found in request object!");
-    error.status = 401;
-    return next(error);
-  }
+  // if (!req.user || !req.user.id) {
+  //   const error = new Error("Unauthorized: No user found in request object!");
+  //   error.status = 401;
+  //   return next(error);
+  // }
 
   // mock userId ถ้าไม่มี token สำหรับ test โดยไม่ต้องใช้ token
-  // const userId = req.user?.id || req.user?._id || "TEST_USER";
+  const userId = req.user?.id || req.user?._id || "TEST_USER";
 
   try {
-    const address = await Address.find();
+    const address = await User.find();
     res.status(200).json({
       error: false,
       address,
@@ -27,7 +27,7 @@ export const getAddress = async (req, res, next) => {
 // createAddress
 export const createAddress = async (req, res, next) => {
   // comment ออก หากจะ test โดยไม่ต้องใช้ token
-  const userId = req.user._id;
+  const userId = req.user.user._id;
 
   // mock userId ถ้าไม่มี token สำหรับ test โดยไม่ต้องใช้ token
   // const userId = req.user?.id || req.user?._id || "TEST_USER";
@@ -70,8 +70,8 @@ export const createAddress = async (req, res, next) => {
       address_postalcode,
     };
 
-    const allAddress = await Address.findOneAndUpdate(
-      {},
+    const allAddress = await User.findOneAndUpdate(
+      { _id: userId },
       { $push: { user_address: address } },
       { new: true, upsert: true }
     );
@@ -113,7 +113,7 @@ export const updateAddress = async (req, res, next) => {
   } = req.body;
 
   try {
-    const allAddress = await Address.findOne({ "user_address._id": addressId });
+    const allAddress = await User.findOne({ "user_address._id": addressId });
 
     if (!allAddress) {
       const error = new Error("Address not found!");
@@ -165,7 +165,7 @@ export const deleteAddress = async (req, res, next) => {
   const addressId = req.params.id;
 
   try {
-    const allAddress = await Address.findOne({ "user_address._id": addressId });
+    const allAddress = await User.findOne({ "user_address._id": addressId });
 
     if (!allAddress) {
       const error = new Error("Address not found!");
@@ -181,7 +181,7 @@ export const deleteAddress = async (req, res, next) => {
       return next(error);
     }
 
-    await Address.updateOne(
+    await User.updateOne(
       { "user_address._id": addressId },
       { $pull: { user_address: { _id: addressId } } }
     );
