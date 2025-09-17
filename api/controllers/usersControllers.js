@@ -283,9 +283,8 @@ export const verifyToken = (req, res) => {
 export const logoutUser = (req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
-    sameSite: "lax", // ต้อง "ตรง" กับตอนตั้ง
     secure: process.env.NODE_ENV === "production",
-    path: "/", // ต้อง "ตรง" กับตอนตั้ง
+    sameSite: "Strict",
   });
   return res.status(200).json({ message: "Logged out successfully" });
 };
