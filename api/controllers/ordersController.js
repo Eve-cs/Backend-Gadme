@@ -281,12 +281,10 @@ export const updateOrderPayment = async (req, res, next) => {
     }
 
     if (["shipped", "delivered", "cancelled"].includes(order.order_status)) {
-      return res
-        .status(400)
-        .json({
-          error: true,
-          message: "Order can’t be updated in current status",
-        });
+      return res.status(400).json({
+        error: true,
+        message: "Order can’t be updated in current status",
+      });
     }
 
     order.order_payment = { method, status, transactionId };
