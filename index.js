@@ -32,6 +32,7 @@ const corsOptions = {
     if (!origin || allowlist.includes(origin)) return cb(null, true);
     return cb(new Error(`CORS blocked: ${origin}`));
   },
+
   credentials: true,
   methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
