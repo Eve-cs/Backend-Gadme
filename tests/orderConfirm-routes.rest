@@ -1,0 +1,48 @@
+### Create new address
+POST http://localhost:3000/order-confirm
+# Cookie: accessToken=
+Content-Type: application/json
+
+{
+  "user_id": "12345",
+  "order_subtotal": 44000,
+  "order_shippingFee": 100,
+  "order_discount": 500,
+  "order_total": 43600,
+  "order_items": [
+    {
+      "product_id": "p001",
+      "product_name": "iPhone 15",
+      "product_image": "https://example.com/iphone.jpg",
+      "product_color": "Black",
+      "product_qty": 1,
+      "product_price": 35000,
+      "product_subtotal": 35000
+    },
+    {
+      "product_id": "p002",
+      "product_name": "AirPods Pro",
+      "product_image": "https://example.com/airpods.jpg",
+      "product_color": "White",
+      "product_qty": 1,
+      "product_price": 9000,
+      "product_subtotal": 9000
+    }
+  ],
+  "order_shipping_address": {
+    "address_firstname": "Gam",
+    "address_lastname": "Eak",
+    "address_phonenumber": "0800000000",
+    "address_subdistrict": "Bang Rak",
+    "address_district": "Bang Rak",
+    "address_province": "Bangkok",
+    "address_postalcode": "10500"
+  },
+  "order_payment": {
+    "method": "credit_card"
+  }
+}
+
+### Get address for logged-in user
+GET http://localhost:3000/order-confirm/68c7a3fb724947bd41dd4c6c
+# Cookie: accessToken=
