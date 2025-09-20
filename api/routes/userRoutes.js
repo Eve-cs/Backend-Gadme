@@ -161,7 +161,7 @@ router.post("/create-account", async (req, res) => {
 });
 
 //Get User
-router.get("/get-user", async (req, res) => {
+router.get("/get-user", authUser, async (req, res) => {
   const { user } = req.user;
 
   const isUser = await User.findOne({ _id: user._id });
@@ -173,7 +173,7 @@ router.get("/get-user", async (req, res) => {
   return res.json({ user: isUser, message: "" });
 });
 
-router.get("/auth/me", (req, res) => {
+router.get("/auth/me", authUser, (req, res) => {
   if (!req.user) {
     return res.status(401).json({ error: "Not authenticated" });
   }
