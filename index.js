@@ -15,22 +15,38 @@ const app = express();
 app.set("trust proxy", 1);
 
 //Global middlewares
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }, // กัน block asset ข้ามโดเมน
+  })
+);
 
+const allowlist = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+  "https://gadme-ecommerce-frontend.vercel.app",
+];
 const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175",
-    "https://gadme-ecommerce-frontend.vercel.app",
-
-  ], // frontend domain
+  origin(origin, cb) {
+    if (!origin || allowlist.includes(origin)) return cb(null, true);
+    return cb(new Error(`CORS blocked: ${origin}`));
+  },
   credentials: true,
+  methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  exposedHeaders: ["set-cookie"],
+  optionsSuccessStatus: 204,
 };
+app.use((_, res, next) => {
+  res.header("Vary", "Origin");
+  next();
+});
 
 //make cors allow frontend request
+app.options("/:path", cors(corsOptions));
 app.use(cors(corsOptions));
-app.use(limiter);
+app.use(limiter); // ต้องให้ limiter ข้าม OPTIONS
 app.use(cookieParser());
 app.use(express.json());
 
