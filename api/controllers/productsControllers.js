@@ -48,59 +48,76 @@ export const getProductById = async (req, res) => {
 export const createProduct = async (req, res, next) => {
   try {
     const {
-      // shared/top-level
       product_name,
       product_brand,
       product_category,
-      product_description,
+      product_description = "",
+      product_tag: incomingTags, // รับชื่อเดียวกับ FE
 
-      // fallback single-variant
+      // single-variant (fallback)
       product_image,
       product_color,
       product_price,
       product_stock,
 
-      // หลาย variant จาก FE
-      variances = [], // ← ตั้งค่าเริ่มต้นกัน undefined
+      // many variants
+      variances = [],
     } = req.body;
 
-    const product_tag = normalizeTags(req.body); // ✅ หยุดใช้ตัวแปร `tags`
-    const userId = getUserIdSafe(req);
+    // ---- แปลง tags ให้เป็น array เสมอ ----
+    const product_tag = Array.isArray(incomingTags)
+      ? incomingTags
+      : typeof incomingTags === "string" && incomingTags.trim()
+      ? incomingTags.split(",").map((s) => s.trim())
+      : [];
 
-    // validate ขั้นต้น
+    // ---- validate ขั้นต้น ----
     if (!product_name || !product_category) {
-      const error = new Error(
-        "Required field still empty. Please fill the required field before try again"
-      );
-      error.status = 400;
-      return next(error);
-    }
-    if (!userId) {
-      return res
-        .status(401)
-        .json({ error: true, message: "Unauthorized - no user ID found" });
+      return res.status(400).json({
+        error: true,
+        message: "Required field still empty. Please fill the required field.",
+      });
     }
 
-    // ถ้ามี variances → แตกเป็นหลายเอกสาร
+    // ---- ถ้ามีหลาย variant: แตกเอกสาร ----
     if (Array.isArray(variances) && variances.length > 0) {
       const docs = variances
-        .filter((v) => v && (v.color || v.price || v.stock || v.image))
-        .map((v) => ({
-          product_name,
-          product_brand,
-          product_category,
-          product_description,
-          product_tag,
-          userId,
-          product_color: v.color ?? "",
-          product_price: Number(v.price ?? 0),
-          product_stock: Number(v.stock ?? 0),
-          product_image: Array.isArray(v.image)
-            ? v.image[0] ?? ""
-            : typeof v.image === "string"
-            ? v.image
-            : "",
-        }));
+        .filter(
+          (v) =>
+            v &&
+            (v.product_color ||
+              v.product_price ||
+              v.product_stock ||
+              v.product_image ||
+              v.color ||
+              v.price ||
+              v.stock ||
+              v.image) // เผื่อเคสเดิม
+        )
+        .map((v) => {
+          const color = v.product_color ?? v.color ?? "";
+          const price = Number(v.product_price ?? v.price ?? 0);
+          const stock = Number(v.product_stock ?? v.stock ?? 0);
+          const imgRaw = v.product_image ?? v.image;
+
+          const img = Array.isArray(imgRaw)
+            ? imgRaw[0] ?? ""
+            : typeof imgRaw === "string"
+            ? imgRaw
+            : "";
+
+          return {
+            product_name,
+            product_brand,
+            product_category,
+            product_description,
+            product_tag,
+            product_color: color,
+            product_price: price,
+            product_stock: stock,
+            product_image: img,
+          };
+        });
 
       if (docs.length > 0) {
         const createdMany = await Product.insertMany(docs);
@@ -113,14 +130,13 @@ export const createProduct = async (req, res, next) => {
       }
     }
 
-    // ไม่มี variances → สร้างชิ้นเดียวจาก top-level
+    // ---- ไม่มี variances: สร้างตัวเดียวจาก top-level ----
     const created = await Product.create({
       product_name,
       product_brand,
       product_category,
       product_description,
       product_tag,
-      userId,
       product_color: product_color ?? "",
       product_price: Number(product_price ?? 0),
       product_stock: Number(product_stock ?? 0),
@@ -133,7 +149,6 @@ export const createProduct = async (req, res, next) => {
       message: "Product created successfully",
     });
   } catch (error) {
-    // ให้ไปที่ errorHandler กลาง พร้อม stack/message เดิม
     return next(error);
   }
 };
@@ -150,6 +165,7 @@ export const editProduct = async (req, res, next) => {
     product_price,
     product_stock,
     product_description,
+    product_tag,
     variances, // ✅ ถ้ามี variances ใหม่ จะอัปเดตให้
     // product_tag / tags จะ normalize ด้านล่าง
   } = req.body;
