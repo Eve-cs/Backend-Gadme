@@ -4,10 +4,12 @@ import addressRoutes from "./addressRoutes.js";
 import productUserRoutes from "./productUserRoutes.js";
 import cartRoutes from "./cartRoutes.js";
 import productRoutes from "./productRoutes.js";
+// import orderRoutes from "./orderRoutes.js";
 
 import userRoutes from "./userRoutes.js";
 import orderConfirmRouters from "./orderConfirmRoutes.js";
 import orderRoutes from "./orderRoutes.js";
+import orderHistoryRoutes from "./orderHistoryRoutes.js";
 
 // import { authUser } from "../../middleware/auth.js"
 
@@ -23,6 +25,7 @@ export default () => {
   router.use("/", userRoutes);
   router.use("/", orderConfirmRouters);
   router.use("/", orderRoutes);
+  router.use("/", orderHistoryRoutes);
 
   return router;
 };

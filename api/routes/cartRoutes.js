@@ -1,4 +1,5 @@
 import express from "express";
+import { authUser } from "../../middleware/auth.js";
 
 import {
   getCartByUser,
@@ -12,18 +13,18 @@ import {
 
 const router = express.Router();
 
-router.get("/cart", getCartByUser);
+router.get("/cart", authUser, getCartByUser);
 
-router.post("/cart", addCartItem);
+router.post("/cart", authUser, addCartItem);
 
-router.delete("/cart", deleteCart);
+router.delete("/cart", authUser, deleteCart);
 
-router.get("/cart/count", countCartByUser);
+router.get("/cart/count", authUser, countCartByUser);
 
-router.put("/cart/:itemId", productQty);
+router.put("/cart/:itemId", authUser, productQty);
 
-router.delete("/cart/:itemId", deleteCartById);
+router.delete("/cart/:itemId", authUser, deleteCartById);
 
-router.get("/cart/meta", getCartMetaHandler);
+router.get("/cart/meta", authUser, getCartMetaHandler);
 
 export default router;
