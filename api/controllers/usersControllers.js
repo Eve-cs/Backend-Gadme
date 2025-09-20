@@ -219,8 +219,6 @@ export const cookieLogin = async (req, res) => {
         .json({ error: true, message: "Invalid credentials" });
 
     const isMatch = await bcrypt.compare(user_password, user.user_password);
-    console.log("Compare:", user_password, "<>", user.user_password);
-    console.log("Match result:", isMatch);
     if (!isMatch) {
       return res.status(401).json({
         error: true,
@@ -285,9 +283,8 @@ export const verifyToken = (req, res) => {
 export const logoutUser = (req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
-    sameSite: "lax", // ต้อง "ตรง" กับตอนตั้ง
     secure: process.env.NODE_ENV === "production",
-    path: "/", // ต้อง "ตรง" กับตอนตั้ง
+    sameSite: "None",
   });
   return res.status(200).json({ message: "Logged out successfully" });
 };
