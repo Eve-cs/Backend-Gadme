@@ -15,7 +15,7 @@ const OrderItemSchema = new Schema(
     product_price: { type: Number, required: true },
     product_subtotal: { type: Number, required: true },
   },
-  { _id: false }
+  { _id: true }
 );
 
 // subschema: shipping address (ไทย)
@@ -29,7 +29,7 @@ const ShippingAddressSchema = new Schema(
     address_province: { type: String, required: true },
     address_postalcode: { type: String, required: true },
   },
-  { _id: false }
+  { _id: true }
 );
 
 // subschema: payment
