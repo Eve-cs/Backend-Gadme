@@ -5,7 +5,7 @@ export const authUser = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: "Please sign in to continue.",
+      message: "Access denied. No Token. You shall not pass.",
     });
   }
   try {
