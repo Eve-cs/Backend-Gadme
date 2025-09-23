@@ -26,7 +26,7 @@ const allowlist = [
   "http://localhost:5174",
   "http://localhost:5175",
   "https://gadme-ecommerce-frontend.vercel.app",
-  "https://gadme-frontend-h3ltsbagp-chunyas-projects.vercel.app",
+  "https://gadme-frontend.vercel.app",
 ];
 const corsOptions = {
   origin(origin, cb) {
