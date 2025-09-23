@@ -240,6 +240,8 @@ export const cookieLogin = async (req, res) => {
       sameSite: isProd ? "none" : "lax",
       path: "/",
       maxAge: 60 * 60 * 1000, // 1h
+      // CHIPS/Partitioned cookies help when 3rd-party cookies are blocked
+      partitioned: true, // ← this line fixes “cookie disappears in browser”
     });
 
     return res.status(200).json({
@@ -284,7 +286,9 @@ export const logoutUser = (req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
+    sameSite: "none",
+    path: "/",
+    partitioned: true,
   });
   return res.status(200).json({ message: "Logged out successfully" });
 };
